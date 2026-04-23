@@ -1,11 +1,19 @@
 import fs from 'fs'
 import path from 'path'
 
+let _cachedKnowledge: string | null = null
+
 export function buildSystemPrompt(): string {
-  const knowledge = fs.readFileSync(
-    path.join(process.cwd(), 'knowledge/business.txt'),
-    'utf-8'
-  )
+  if (!_cachedKnowledge) {
+    try {
+      _cachedKnowledge = fs.readFileSync(
+        path.join(process.cwd(), 'knowledge/business.txt'),
+        'utf-8'
+      )
+    } catch {
+      throw new Error('Business knowledge file not found — check deployment')
+    }
+  }
   return `
 You are a friendly, professional assistant for Kalle Hermosa Landscape (Phoenix, AZ).
 Use the business knowledge below to answer visitor questions accurately and helpfully.
@@ -14,7 +22,7 @@ Never quote exact prices — always guide customers to request a free quote.
 If you cannot answer something, say: "Great question — call us at 623-734-5830 or fill out our contact form and we'll get right back to you."
 
 --- BUSINESS KNOWLEDGE ---
-${knowledge}
+${_cachedKnowledge}
 --- END KNOWLEDGE ---
 
 LEAD CAPTURE INSTRUCTIONS:
