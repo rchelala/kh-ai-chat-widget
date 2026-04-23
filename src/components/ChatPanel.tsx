@@ -30,10 +30,13 @@ export function ChatPanel({
     onSendMessage(text)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(e as unknown as React.FormEvent)
+      const text = input.trim()
+      if (!text || isLoading) return
+      setInput('')
+      onSendMessage(text)
     }
   }
 
@@ -73,6 +76,7 @@ export function ChatPanel({
           onKeyDown={handleKeyDown}
           disabled={isLoading}
           autoComplete="off"
+          autoFocus
         />
         <button
           type="submit"

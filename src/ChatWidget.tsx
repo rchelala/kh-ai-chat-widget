@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { ChatBubble } from './components/ChatBubble'
 import { ChatPanel } from './components/ChatPanel'
 import { useChatAgent } from './hooks/useChatAgent'
@@ -11,22 +11,23 @@ export function ChatWidget() {
   const [showChips, setShowChips] = React.useState(false)
   const { messages, isLoading, sendMessage, startLeadCapture } = useChatAgent()
 
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
+    if (isOpen) return
     setIsOpen(true)
     setHasUnread(false)
     // Show chips after a brief delay to feel natural
     setTimeout(() => setShowChips(true), 300)
-  }
+  }, [isOpen])
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = useCallback((text: string) => {
     setShowChips(false) // hide chips once user engages
     sendMessage(text)
-  }
+  }, [sendMessage])
 
-  const handleStartLeadCapture = () => {
+  const handleStartLeadCapture = useCallback(() => {
     setShowChips(false)
     startLeadCapture()
-  }
+  }, [startLeadCapture])
 
   // Determine what messages to display — prepend welcome if no messages yet
   const displayMessages = messages.length === 0
@@ -45,7 +46,7 @@ export function ChatWidget() {
           showChips={showChips && messages.length === 0}
         />
       )}
-      <ChatBubble onClick={handleOpen} hasUnread={hasUnread} />
+      {!isOpen && <ChatBubble onClick={handleOpen} hasUnread={hasUnread} />}
     </div>
   )
 }

@@ -14,25 +14,25 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
   }, [messages, isLoading])
 
   return (
-    <div className="kh-widget-messages">
+    <ul className="kh-widget-messages" role="log" aria-live="polite" aria-label="Chat messages">
       {messages.map(msg => (
-        <div
+        <li
           key={msg.id}
           className={`kh-widget-message kh-widget-message--${msg.role}`}
         >
           {msg.text}
-        </div>
+        </li>
       ))}
       {isLoading && (
-        <div className="kh-widget-message kh-widget-message--assistant">
+        <li className="kh-widget-message kh-widget-message--assistant" aria-label="Loading">
           <div className="kh-widget-typing">
             <span />
             <span />
             <span />
           </div>
-        </div>
+        </li>
       )}
       <div ref={bottomRef} />
-    </div>
+    </ul>
   )
 }

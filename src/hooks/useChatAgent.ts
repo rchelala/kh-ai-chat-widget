@@ -35,6 +35,7 @@ export function useChatAgent() {
   const [mode, setMode] = useState<ChatMode>('CHATTING')
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const isLoadingRef = useRef(false)
   const [aiReplyCount, setAiReplyCount] = useState(0)
   const [leadData, setLeadData] = useState<LeadData>({})
   const [currentLeadField, setCurrentLeadField] = useState<LeadField>('name')
@@ -77,6 +78,7 @@ export function useChatAgent() {
 
     if (nextField === 'done') {
       setCurrentLeadField('done')
+      isLoadingRef.current = true
       setIsLoading(true)
       try {
         await fetch('/api/chat', {
@@ -93,6 +95,7 @@ export function useChatAgent() {
         modeRef.current = 'CHATTING'
         setMode('CHATTING')
       } finally {
+        isLoadingRef.current = false
         setIsLoading(false)
       }
     } else {
@@ -103,7 +106,7 @@ export function useChatAgent() {
   }, [addMessage])
 
   const sendMessage = useCallback(async (text: string) => {
-    if (!text.trim() || isLoading) return
+    if (!text.trim() || isLoadingRef.current) return
 
     if (modeRef.current === 'LEAD_CAPTURE') {
       await handleLeadMessage(text, currentLeadField, leadData)
@@ -111,6 +114,7 @@ export function useChatAgent() {
     }
 
     addMessage('user', text)
+    isLoadingRef.current = true
     setIsLoading(true)
 
     try {
@@ -129,9 +133,10 @@ export function useChatAgent() {
     } catch {
       addMessage('assistant', "Sorry, I'm having trouble connecting right now. Please call us at 623-734-5830.")
     } finally {
+      isLoadingRef.current = false
       setIsLoading(false)
     }
-  }, [addMessage, currentLeadField, handleLeadMessage, isLoading, leadData])
+  }, [addMessage, currentLeadField, handleLeadMessage, leadData])
 
   return {
     mode,

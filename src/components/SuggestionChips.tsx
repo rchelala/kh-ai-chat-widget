@@ -6,11 +6,11 @@ interface SuggestionChipsProps {
 }
 
 const CHIPS = [
-  { label: '🌿 Get a Quote', action: 'quote' },
+  { label: '🌿 Get a Quote', action: 'quote' as const },
   { label: '🔧 Services', text: 'What services do you offer?' },
   { label: '📞 Contact', text: 'How can I contact you?' },
-  { label: '📅 Book', action: 'quote' },
-] as const
+  { label: '📅 Book', text: 'I want to book a service' },
+]
 
 export function SuggestionChips({ onChipClick, onQuoteClick }: SuggestionChipsProps) {
   return (
@@ -20,9 +20,9 @@ export function SuggestionChips({ onChipClick, onQuoteClick }: SuggestionChipsPr
           key={chip.label}
           className="kh-widget-chip"
           onClick={() => {
-            if (chip.action === 'quote') {
+            if ('action' in chip && chip.action === 'quote') {
               onQuoteClick()
-            } else {
+            } else if ('text' in chip) {
               onChipClick(chip.text)
             }
           }}

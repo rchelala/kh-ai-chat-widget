@@ -16,7 +16,7 @@ export function ChatBubble({ onClick, hasUnread }: ChatBubbleProps) {
   return (
     <div className="kh-widget-bubble-wrapper">
       {showTooltip && (
-        <div className="kh-widget-tooltip">
+        <div className="kh-widget-tooltip" role="tooltip" id="kh-widget-tooltip">
           💬 Chat with us
         </div>
       )}
@@ -24,6 +24,7 @@ export function ChatBubble({ onClick, hasUnread }: ChatBubbleProps) {
         className="kh-widget-bubble"
         onClick={onClick}
         aria-label="Open chat"
+        aria-describedby={showTooltip ? 'kh-widget-tooltip' : undefined}
       >
         💬
         {hasUnread && <span className="kh-widget-badge" />}
