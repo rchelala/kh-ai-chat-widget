@@ -1,4 +1,3 @@
-import React from 'react'
 
 interface SuggestionChipsProps {
   onChipClick: (text: string) => void
