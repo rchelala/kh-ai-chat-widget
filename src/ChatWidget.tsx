@@ -10,17 +10,6 @@ export function ChatWidget() {
   const [hasUnread, setHasUnread] = React.useState(true)
   const [showChips, setShowChips] = React.useState(false)
   const { messages, isLoading, sendMessage, startLeadCapture } = useChatAgent()
-  const initialized = React.useRef(false)
-
-  // Send welcome message once on mount
-  React.useEffect(() => {
-    if (initialized.current) return
-    initialized.current = true
-    // Directly add welcome as assistant message via the messages state
-    // We do this by sending a synthetic first message — instead, just set it via the hook's internal mechanism.
-    // Since the hook doesn't expose addMessage, we'll add the welcome message by triggering a fake first load.
-    // Actually, the cleanest approach: show a hardcoded welcome line before any real messages.
-  }, [])
 
   const handleOpen = () => {
     setIsOpen(true)
