@@ -9,7 +9,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/widget.ts'),
       name: 'KHWidget',
-      fileName: 'widget',
+      fileName: () => 'widget.js',
       formats: ['iife'],
     },
   },
