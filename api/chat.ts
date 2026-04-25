@@ -3,8 +3,24 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { Resend } from 'resend'
 import { buildSystemPrompt } from './lib/rag'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-const resend = new Resend(process.env.RESEND_API_KEY!)
+let _genAI: GoogleGenerativeAI | null = null
+let _resend: Resend | null = null
+
+function getGenAI(): GoogleGenerativeAI {
+  if (!_genAI) {
+    if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY is not set')
+    _genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+  }
+  return _genAI
+}
+
+function getResend(): Resend {
+  if (!_resend) {
+    if (!process.env.RESEND_API_KEY) throw new Error('RESEND_API_KEY is not set')
+    _resend = new Resend(process.env.RESEND_API_KEY)
+  }
+  return _resend
+}
 
 const esc = (s: unknown) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
@@ -38,7 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     try {
       // Send email notification
-      await resend.emails.send({
+      await getResend().emails.send({
         from: 'KH Widget <onboarding@resend.dev>',
         to: 'info@kellehermosalandscape.com',
         subject: `New Lead: ${esc(lead.name)} — ${esc(lead.serviceType)}`,
@@ -96,7 +112,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }))
 
   try {
-    const model = genAI.getGenerativeModel({
+    const model = getGenAI().getGenerativeModel({
       model: 'gemini-2.5-flash',
       systemInstruction: buildSystemPrompt(),
     })
