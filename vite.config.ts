@@ -12,10 +12,5 @@ export default defineConfig({
       fileName: 'widget',
       formats: ['iife'],
     },
-    rollupOptions: {
-      output: {
-        inlineDynamicImports: true,
-      },
-    },
   },
 })
